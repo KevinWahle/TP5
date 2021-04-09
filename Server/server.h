@@ -19,7 +19,7 @@ private:
 	void connectionReceived(const boost::system::error_code& error);
 	void startAnswering();
 	void responseSent(const boost::system::error_code& error, size_t bytes_sent);
-	void stopListening();
+	//void stopListening();
 
 	std::string data;
 

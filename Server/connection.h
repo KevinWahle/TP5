@@ -11,13 +11,14 @@ public:
 	string getData();
 	void setData();
 
-	void sendData();
-	void disconnect();
+	bool sendData();
+	bool disconnect();
 	bool isNewData();
 	bool isFinished();
 
 private:
-	string data;
+	string path;
+	string filename;
 	bool send;
 	bool disconnect;
 	bool newData;
