@@ -1,15 +1,11 @@
 #include "client.h"
 
-void client::getData(int argc, char* argv[]) {
+void client :: setData(string mydata) {
+	Data = mydata;
+}
 
-
-	if (argc > 1) {
-		//error
-	}
-	else {
-		setData(argv);
-	}
-
+string client::getData() {
+	return Data;
 }
 
 void client::Request() {
@@ -21,10 +17,8 @@ void client::Request() {
 	curl = curl_easy_init();
 
 	if ((error == CURLE_OK) && (curl)) {
-		curl_easy_setopt(curl, CURLOPT_URL, "localhost"); //configuracion
-		curl_easy_setopt(curl, CURLOPT_PORT, 80);
-		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L); //o =1L
-		curl_easy_setopt(curl, CURLOPT_PROTOCOL, CURLPROTO_HTTP); //o http
+		
+		configCurl();
 	}
 	error = curl_easy_perform(curl);
 	if (error == CURLE_OK) {
@@ -38,8 +32,17 @@ void client::Request() {
 	curl_easy_cleanup(curl);
 }
 
+void client::configCurl () {
+	curl_easy_setopt(curl, CURLOPT_URL, "localhost"); //configuracion
+	curl_easy_setopt(curl, CURLOPT_PORT, 80);
+	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L); //o =1L
+	curl_easy_setopt(curl, CURLOPT_PROTOCOL, CURLPROTO_HTTP); //o http
+}
+
 void client::succeded() {
+	cout << "The operation has succeded" << endl;
+}
 
-
-
+void client::failed() {
+	cout << "The operation has failed" << endl;
 }
