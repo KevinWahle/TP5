@@ -8,7 +8,7 @@ string client::getData() {
 	return Data;
 }
 
-void client::Request() {
+void client::Request(int argc, char * argv[]) {
 
 	//inicializacion y creo el handler
 	CURLcode error;
@@ -21,6 +21,7 @@ void client::Request() {
 		configCurl();
 	}
 	error = curl_easy_perform(curl);
+
 	if (error == CURLE_OK) {
 		//los resultados estan en el buffer q yo mande en el callback
 		succeded();
@@ -46,3 +47,10 @@ void client::succeded() {
 void client::failed() {
 	cout << "The operation has failed" << endl;
 }
+
+
+
+
+
+
+
