@@ -1,5 +1,4 @@
 
-#include <curl/curl.h>
 #include "client.h"
 
 
@@ -14,20 +13,4 @@ int main(int argc, char* argv[]) {
 	else {
 		cout << "The arguments are not valid\n" << endl;
 	}
-}
-
-
-
-
-
-class client {
-public:
-	string getData();
-	void setData(string mydata);
-	void Request(); 
-private:
-	void configCurl();
-	void succeded();
-	void failed();
-	string Data;
 }
