@@ -28,7 +28,6 @@ public:
 	//Chequeo de nueva respuesta
 	bool isNewResponse();
 
-	//NI IDEA PARA QUE ESTARIA ESTE 
 	void disconnect();
 
 	bool isFinished();

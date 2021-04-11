@@ -13,12 +13,12 @@ public:
 	void start(Connection connection);
 
 	//Verifica si el request se corresponde con HTTP.
-	bool isConnectionOK();
+	void isConnectionOK();
 
 	//Busca, abre archivos y guarda contenido de archivo. De producirse error en alguno de los pasos, devuelve error. 
-	bool doRequest();
+	void doRequest();
 
-	//Guarda respuesta en connection
+	//Devuelve respuesta.
 	string getResponse();
 
 	//Activa flag de respuesta en connection.
@@ -26,16 +26,18 @@ public:
 
 private:
 	//Lee request y guarda los campos. De no cumplir el formato, devuelve error.
-	bool readRequest();
+	//bool readRequest();
 
 	//Construye respuesta 
-	void doResponse();
+	//void doResponse();
 
 
 	string request;
+	string filename;
+	string fileContent;
 	string response;
-
-
+	int filenameLength;
+	bool fileCheck;
 }
 
 #endif

@@ -40,7 +40,7 @@ bool Connection::isFinished(){
 	return disconnect;
 }
 
-void Connection::disconnect(){	//FIJATE QUE DEBERIA SE UN BOOL
+void Connection::disconnect(){	
 	disconnect = true;
 }
 
