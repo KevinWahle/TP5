@@ -3,28 +3,46 @@
 
 #include <string>
 
+using namespace std;
+
 class Connection {
 public:
 
 	Connection();
 
-	string getData();
-	void setData();
+	//Getter request 
+	string getRequest();
 
-	bool sendData();
-	bool disconnect();
-	bool isNewData();
+	//Getter request 
+	void setRequest(string);
+
+	//Chequeo de nueva información introducida
+	bool isNewRequest();
+
+	//Setter respuesta
+	void setResponse(string);
+
+	//Getter respuesta
+	string getResponse();
+
+	//Chequeo de nueva respuesta
+	bool isNewResponse();
+
+	//NI IDEA PARA QUE ESTARIA ESTE 
+	void disconnect();
+
 	bool isFinished();
 
-private:
-	string path;
-	string filename;
-	bool send;
-	bool disconnect;
-	bool newData;
-	bool finished;
-}
 
+
+private:
+	string request;
+	string response;
+	bool send;
+	bool newRequest;
+	bool newResponse;
+	bool disconnect;
+}
 
 #endif
 

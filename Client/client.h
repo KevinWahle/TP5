@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <curl/curl.h>
-
+#include <sting>
 
 
 class client {

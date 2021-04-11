@@ -3,6 +3,7 @@
 
 #include <boost\asio.hpp>
 #include <string>
+#include "connection.h"
 
 class server 
 {
@@ -16,16 +17,19 @@ public:
 
 private:
 	void startWaitingConnection();
-	void connectionReceived(const boost::system::error_code& error);
 	void startAnswering();
-	void responseSent(const boost::system::error_code& error, size_t bytes_sent);
+	void connectionReceived_cb(const boost::system::error_code& error);
+	void dataReceived_cb(const boost::system::error_code& error, std::size_t size);
+	void responseSent_cb(const boost::system::error_code& error, size_t bytes_sent);
 	//void stopListening();
 
 	std::string data;
+	std::sting answer;
 
 	boost::asio::io_context& context_;
 	boost::asio::ip::tcp::socket socket_;
 	boost::asio::ip::tcp::acceptor acceptor_;
+	boost::asio::strambuf mybuffer;
 }
 
 #endif /* _SERVER_H */

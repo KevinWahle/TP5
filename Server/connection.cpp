@@ -1,37 +1,49 @@
 #include "connection.h"
 #include <iostream>
 
-using namespace std;
-
 Connection::Connection(){
-	data = "";
+	request = "";
+	response = "";
 	send = false;
-	disconnect = false;
-	newData = false;
-	finished = false;
+	newRequest = false;
+	newResponse = false;
+	finished = false;			//NO EXISTE FINISHED
 }
 
-string Connection::getData(){
-	return data;
+string Connection::getRequest(){
+	return request;
 }
 
-bool Connection::setData(string clientData){
-	data = clientData;
+void Connection::setRequest(string clientRequest){
+	request = clientRequest;
+	newRequest = true;
 }
 
-bool Connection::sendData(){
-
+bool Connection::isNewRequest() {
+	return newRequest;
 }
 
-void Connection::disconnect(){
-
+string Connection::getResponse() {
+	return response;
 }
 
-bool Connection::isNewData(){
+void Connection::setResponse(string response) {
+	this->response = response;
+	newResponse = true;
+}
 
+bool Connection::isNewResponse() {
+	return newResponse;
 }
 
 bool Connection::isFinished(){
-
+	return disconnect;
 }
+
+void Connection::disconnect(){	//FIJATE QUE DEBERIA SE UN BOOL
+	disconnect = true;
+}
+
+
+
 
