@@ -76,7 +76,8 @@ void server::dataReceived_cb(const boost::system::error_code& error, std::size_t
 void server::startAnswering()
 {
 	std::cout << "start Answering" << std::endl;
-
+	while (!connection->isNewResponse()); //Espera que haya un mensaje para devolver
+	//TODO conncection->setNewResponse(0); /////////////////////////////////////////////////////////////////
 	boost::asio::async_write(
 		socket_,
 		boost::asio::buffer(connection->getResponse()),

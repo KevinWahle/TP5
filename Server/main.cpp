@@ -10,7 +10,7 @@ int main () {
 	server server(io_context, 80, &myconnection);
 	server.startListening();
 	io_context.run();
-
+	//LLAMAR A FUNCIONES DE HTTPSERVER Y CARGAR/LEER DATOS DE MYCONNECTION
 }
 /*
 ///////////////////// Servidor
