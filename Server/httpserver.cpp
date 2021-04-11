@@ -132,11 +132,14 @@ string HTTPServer::getResponse() {
 	response += "\r\n";
 	response += "Date: ";
 
+	//Tiempo
 	time_t date = time(0);
 	tm* gmtm = gmtime(&date);
 	char* dateGMT = asctime(gmtm);
 	response += dateGMT;
 	response += "\r\n";
+
+
 	if (fileCheck != false) {
 		response += "Location: 127.0.0.1" + filename;
 	}
@@ -144,7 +147,11 @@ string HTTPServer::getResponse() {
 	response += "Cache-Control: max-age=30";
 	response += "\r\n";
 	response += "Expires: ";
-	response += DATE + 30;
+
+	gmtm->tm_sec += 30;
+	dateGMT = asctime(gmtm);
+	response += dateGMT;
+
 	response += "\r\n";
 	response += "Content-Length: ";
 	response += to_string(filenameLength);
