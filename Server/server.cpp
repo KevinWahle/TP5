@@ -5,11 +5,12 @@
 using boost::asio::ip::tcp;
 
 
-server::server(boost::asio::io_context& io_context)
+server::server(boost::asio::io_context& io_context, int port, Connection* ptr)
 	: context_(io_context),
-	acceptor_(io_context, tcp::endpoint(tcp::v4(), 80)),	//Puerto 80
+	acceptor_(io_context, tcp::endpoint(tcp::v4(), port)),	//Puerto 80
 	socket_(io_context)
 {
+	connection = ptr;
 }
 
 server::~server()
@@ -64,8 +65,7 @@ void server::connectionReceived_cb(const boost::system::error_code& error)
 void server::dataReceived_cb(const boost::system::error_code& error, std::size_t size)
 {
 	if (!error) {
-		//Connection::setRequest("hola");
-		data = boost::asio::buffer_cast<const char*>(mybuffer.data()));
+		connection->setRequest(boost::asio::buffer_cast<const char*>(mybuffer.data()));
 		startAnswering();
 	}
 	else {
@@ -76,21 +76,10 @@ void server::dataReceived_cb(const boost::system::error_code& error, std::size_t
 void server::startAnswering()
 {
 	std::cout << "start Answering" << std::endl;
-	/*
-	MANDO EL ARCHIVO Y TODO
-	
-	answer= "HTTP/1.1 200 OK \r\n" +
-			"Date: " + timeNow + "\r\n" +
-			"Location: 127.0.0.1/ \r\n" +
-			"Cache-Control: public, max-age=30 \r\n" +
-			"Expires: " + timeExp + "\r\n" +
-			"Content-Length: " + to_string(response.length()) + " \r\n" +
-			"Content-Type: text/html; charset=iso-8859-1 \r\n" +
-			response + "\r\n\r\n";
-	*/
+
 	boost::asio::async_write(
 		socket_,
-		boost::asio::buffer(answer),
+		boost::asio::buffer(connection->getResponse()),
 		boost::bind(
 			&server::responseSent_cb,
 			this,
@@ -98,6 +87,7 @@ void server::startAnswering()
 			boost::asio::placeholders::bytes_transferred
 		)
 	);
+
 }
 
 void server::responseSent_cb(const boost::system::error_code& error, size_t bytes_sent)

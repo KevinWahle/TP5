@@ -1,3 +1,6 @@
+#ifndef __HTTPSERVER_H
+#define __HTTPSERVER_H
+
 #include "connection.h"
 
 #include <iostream>
@@ -34,3 +37,5 @@ private:
 
 
 }
+
+#endif
