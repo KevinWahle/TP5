@@ -3,20 +3,23 @@
 
 #include <iostream>
 #include <curl/curl.h>
-#include <sting>
-
+#include <string>
+using namespace std;
 
 class client {
 public:
-	string getData();
+	//string getData();
 	void setData(string mydata);
 	void Request(int argc, char* argv[]);
+	string dataRecieved;
+	static size_t writeCallback(char* ptr, size_t size, size_t nmemb, void* userData);
 private:
-	void configCurl();
+	void configCurl(CURL* curl, char* argv);
+	int createFile();
+	string fileName();
 	void succeded();
 	void failed();
-	string Data;
-}
+	string data;
+};
 
-
-#endif 
+#endif //CLIENT_H 
