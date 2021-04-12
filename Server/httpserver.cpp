@@ -2,13 +2,18 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <time.h>
 
 
 #define		GET		"GET"
 #define		HTTP_PROTOCOL	 "HTTP/1.1"
+#define		HTML	".html"
+#define		JSON	".json"
+#define		TXT		".txt"
 #define		HOST	"Host: 127.0.0.1"
 #define		CRLF	"\r\n"
+#define		RELATIVE_PATH	".."
 
 #pragma warning(disable : 4996)
 
@@ -35,91 +40,68 @@ void HTTPServer::start() {
 //Verifica si el request se corresponde con HTTP.
 bool HTTPServer::isRequestOK() {
 
-	cout << "request " << request << endl;
-
 	//Separa request en lineas. 
 	size_t firstLineLength = request.find(CRLF);
-
 	if (firstLineLength == string::npos) {
 		return fileCheck;
 	}
-
-	cout << "firstLineLength " << firstLineLength << endl;
-
 	string firstLine = request.substr(0, firstLineLength);
-
-	cout << "firstLine " << firstLine << endl;
-
 	size_t secondLineLength = request.find(CRLF, firstLineLength + 2);
-
 	if (secondLineLength == string::npos) {
 		return fileCheck;
 	}
-
-	cout << "secondLineLength " << secondLineLength << endl;
-
 	string secondLine = request.substr(firstLineLength + 2, secondLineLength - firstLineLength - 1);
-
-	cout << "secondLine " << secondLine << endl;
-
 	//Si la segunda linea no es equivalente a HOST, la request es incorrecta.
 	if (!secondLine.compare(HOST)) {
 		return fileCheck;
 	}
 
-	//Separa firstLine en words.
-	string firstLineWords[3];
-
-	size_t lastSpace = 0;
-	size_t position = 0;
-	int i = 0;
-	while (firstLineLength > 0) {
-		lastSpace = firstLine.rfind(" ");	//Analiza desde el final para atras los espacios
-		if (lastSpace == string::npos) {
-			lastSpace = 0;
-			position = lastSpace;
-		}
-		else {
-			position = lastSpace + 1;
-		}
-		if (lastSpace < firstLineLength) {	//De haber palabras entre el espacio y el final, o de no haber espacio, lo guarda.
-			if (i >= 3) {	//Si se encontraron mas de tres palabras, request error. 
-				return fileCheck;
-			}
-			else {	//Guarda palabra localizada y reduce firstLine.
-				firstLineWords[i++].assign(firstLine, position, firstLineLength - lastSpace + 1);
-				firstLine.resize(lastSpace);
-				firstLineLength = lastSpace;
-			}
-		}
-		else {	//De haber un espacio en el ultimo caracter, lo borra.
-			firstLine.pop_back();
-			firstLineLength--;
-		}
-	}
-	cout << "First word" << firstLineWords[0] << endl;
-	cout << "Second word" << firstLineWords[1] << endl;
-	cout << "Third word" << firstLineWords[2] << endl;
-
-	//Analiza primera linea de request.
-	if (firstLineWords[2].compare(GET) != 0) {
+	//Analiza primera linea.
+	size_t found = 0;
+	found = firstLine.find(GET);
+	if (found == string::npos || found != 0) {
 		return fileCheck;
 	}
-	if (firstLineWords[1].compare(HTTP_PROTOCOL) != 0) {
-		if (firstLineWords[0].compare(HTTP_PROTOCOL) != 0) {
-			fileCheck = false;
-			cout << "HOLA  2" << endl;
-			return fileCheck;
+	firstLine.erase(found, 3);
+	found = firstLine.find(HTTP_PROTOCOL);
+	if (found == string::npos) {
+		return fileCheck;
+	}
+	firstLine.erase(found, 8);
+
+	size_t slash = firstLine.find("/");
+	found = firstLine.find(HTML);
+	if (found == string::npos) {
+		found = firstLine.find(TXT);
+		if (found == string::npos) {
+			found = firstLine.find(JSON);
+			if (found == string::npos) {
+				return fileCheck;
+			}
+			else {
+				filename.assign(firstLine, slash, found + 5 - slash);
+			}
 		}
 		else {
-			filename.assign(firstLineWords[1]);
+			filename.assign(firstLine, slash, found + 4 - slash);
 		}
 	}
 	else {
-		cout << "HOLA  4" << endl;
-		filename.assign(firstLineWords[0]);
+		filename.assign(firstLine, slash, found + 5 - slash);
 	}
-	cout << "filename " << filename << endl;
+	//Adapta filename.
+	slash = 0;
+	do {
+		slash = filename.find("/");
+		if (slash != string::npos) {
+			if (slash == 0) {
+				filename.erase(slash, 1);
+			}
+			else {
+				filename.replace(slash, 1, "\\");
+			}
+		}
+	} while (slash != string::npos);
 
 	//Si llegó hasta acá, parseo de request completo.
 	fileCheck = true;
@@ -129,30 +111,24 @@ bool HTTPServer::isRequestOK() {
 //Busca, abre archivos y guarda contenido de archivo. De producirse error en alguno de los pasos, devuelve error. 
 void HTTPServer::doRequest() {
 	if (fileCheck == false) {
-		cout << "HOLAAAA 1" << endl;
 		return;
 	}
 	ifstream file(filename);
-	if (!file) {
-		cout << "HOLAAAA 2" << endl;
+	if (!file.is_open()) {
+		fileCheck = false;
 		return;
 	}
 	else
 	{
+		//Busca contenido.
+		string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+		fileContent.insert(0, content);
+
+		//Calcula largo del contenido.
 		file.seekg(0, file.end);
 		filenameLength = file.tellg();
-		file.seekg(0, file.beg);
-		char* buffer = new char[filenameLength]();
-		file.read(buffer, filenameLength);
-		if (!file) {
-			cout << "HOLAAAA 3" << endl;
-			return;
-		}
-		else {
-			fileContent.assign(buffer);
-		}
+
 		file.close();
-		delete[] buffer;
 	}
 }
 
@@ -212,12 +188,8 @@ void HTTPServer::doResponse() {
 	response += "Content-Type: text/html; charset=iso-8859-1";
 	response += "\r\n";
 	if (fileCheck != false) {
+		response += "\r\n";
 		response += fileContent;
 		response += "\r\n";
 	}
 }
-
-//Activa flag de respuesta en connection.
-//void HTTPServer::stop() {
-//	connection.disconnect();
-//}
