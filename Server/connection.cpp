@@ -1,20 +1,22 @@
 #include "connection.h"
 #include <iostream>
 
-Connection::Connection(){
+
+
+Connection::Connection() {
 	request = "";
 	response = "";
-	send = false;
 	newRequest = false;
 	newResponse = false;
-	finished = false;			//NO EXISTE FINISHED
+	finished = false;
 }
 
-string Connection::getRequest(){
+string Connection::getRequest() {
+	newRequest = false;
 	return request;
 }
 
-void Connection::setRequest(string clientRequest){
+void Connection::setRequest(string clientRequest) {
 	request = clientRequest;
 	newRequest = true;
 }
@@ -24,6 +26,7 @@ bool Connection::isNewRequest() {
 }
 
 string Connection::getResponse() {
+	newResponse = false;
 	return response;
 }
 
@@ -36,12 +39,13 @@ bool Connection::isNewResponse() {
 	return newResponse;
 }
 
-bool Connection::isFinished(){
-	return disconnect;
+//ME PARECE QUE ESTAS DOS NO SON NECESARIAS
+bool Connection::isFinished() {
+	return finished;
 }
 
-void Connection::disconnect(){	
-	disconnect = true;
+void Connection::disconnect() {
+	finished = true;
 }
 
 

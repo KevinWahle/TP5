@@ -28,20 +28,19 @@ public:
 	//Chequeo de nueva respuesta
 	bool isNewResponse();
 
-	void disconnect();
-
 	bool isFinished();
+
+	void disconnect();
 
 
 
 private:
 	string request;
 	string response;
-	bool send;
 	bool newRequest;
 	bool newResponse;
-	bool disconnect;
-}
+	bool finished;
+};
 
-#endif
+#endif //__CONNECTION_H
 

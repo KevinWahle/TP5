@@ -2,27 +2,26 @@
 #define __HTTPSERVER_H
 
 #include "connection.h"
-
 #include <iostream>
 
 class HTTPServer {
 public:
-	HTTPServer();
+	HTTPServer(Connection* connection);
 
 	//Recibe request de connection y los guarda.
-	void start(Connection connection);
+	void start();
 
 	//Verifica si el request se corresponde con HTTP.
-	void isConnectionOK();
+	bool isRequestOK();
 
 	//Busca, abre archivos y guarda contenido de archivo. De producirse error en alguno de los pasos, devuelve error. 
 	void doRequest();
 
 	//Devuelve respuesta.
-	string getResponse();
+	void doResponse();
 
 	//Activa flag de respuesta en connection.
-	void stop(Connection connection);
+	//void stop();
 
 private:
 	//Lee request y guarda los campos. De no cumplir el formato, devuelve error.
@@ -31,13 +30,13 @@ private:
 	//Construye respuesta 
 	//void doResponse();
 
-
+	Connection* myConnection;
 	string request;
 	string filename;
 	string fileContent;
 	string response;
 	int filenameLength;
 	bool fileCheck;
-}
+};
 
 #endif
