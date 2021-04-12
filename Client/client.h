@@ -8,7 +8,6 @@ using namespace std;
 
 class client {
 public:
-	//string getData();
 	void setData(string mydata);
 	void Request(int argc, char* argv[]);
 	string dataRecieved;

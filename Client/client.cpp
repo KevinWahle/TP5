@@ -10,10 +10,6 @@ void client::setData(string mydata) {
 	data = mydata;
 }
 
-//string client::getData() {
-//	return Data;
-//}
-
 void client::Request(int argc, char* argv[]) {
 
 	//inicializacion y creo el handler
