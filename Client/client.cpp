@@ -64,15 +64,15 @@ void client::failed() {
 }
 
 int client::createFile() {
-	int failed = 0;
+	int succeed = 1;
 	ofstream outfile(fileName());
 	outfile << dataRecieved;
 	if (outfile.fail())
 	{
-		failed = 1;
+		succeed = 0;
 	}
 	outfile.close();
-	return failed;
+	return succeed;
 	//devuelve 1 si se pudo crear el file, cero si no
 }
 
