@@ -5,7 +5,7 @@
 #include <string>
 #include "connection.h"
 
-class server 
+class server
 {
 public:
 	server(boost::asio::io_context& context, int port, Connection* ptr);
@@ -24,12 +24,12 @@ private:
 	//void stopListening();
 
 	std::string data;
-	std::sting answer;
+	std::string answer;
 	Connection* connection;
 	boost::asio::io_context& context_;
 	boost::asio::ip::tcp::socket socket_;
 	boost::asio::ip::tcp::acceptor acceptor_;
-	boost::asio::strambuf mybuffer;
-}
+	boost::asio::streambuf mybuffer;
+};
 
 #endif /* _SERVER_H */

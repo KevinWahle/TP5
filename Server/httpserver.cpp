@@ -192,4 +192,5 @@ void HTTPServer::doResponse() {
 		response += fileContent;
 		response += "\r\n";
 	}
+
 }

@@ -10,44 +10,14 @@ int main () {
 	server server(io_context, 80, &myconnection);
 	server.startListening();
 	io_context.run();
-	//LLAMAR A FUNCIONES DE HTTPSERVER Y CARGAR/LEER DATOS DE MYCONNECTION
-}
-/*
-///////////////////// Servidor
-class server{
-	startListening();
 	
-	start_waiting_connection();
+	HTTPServer http (&myconnection);
+	std::cout << "casi entre a http" << std::endl;
 
-	conectionReceived();
+	while (myconnection.isNewRequest()){
+		std::cout << "entre a http" << std::endl;
 
-	start_answering();
-
-	stopListening();
-
-	getData()
-
-	setData()
-
-	string data;
+		http.start();
+	}
 }
 
-
-class connection{
-	getData();
-	sendData();
-	disconnect();
-	isNewData();
-	isFinished();
-}
-
-
-class HTTP {
-	checkInfo();
-	setInfo();
-}
-
-
-
-
-*/

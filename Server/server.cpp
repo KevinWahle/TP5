@@ -24,6 +24,7 @@ void server::startListening()
 		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
 		socket_.close();
 	}
+	mybuffer.consume(mybuffer.size());
 	startWaitingConnection();
 }
 
@@ -36,10 +37,10 @@ void server::startWaitingConnection()
 		std::cout << "Error: Can't accept new connection from an open socket" << std::endl;
 		return;
 	}
-	acceptor_.async_accept(			
+	acceptor_.async_accept(
 		socket_,
 		boost::bind(
-			&server::connectionReceived_cb, 
+			&server::connectionReceived_cb,
 			this,
 			boost::asio::placeholders::error
 		)
@@ -49,13 +50,13 @@ void server::startWaitingConnection()
 void server::connectionReceived_cb(const boost::system::error_code& error)
 {
 	if (!error) {
-	std::cout << "connection Received" << std::endl;
+		std::cout << "connection Received" << std::endl;
 
-	boost::asio::async_read_until(socket_, mybuffer, "\r\n\r\n",			
-		boost::bind(&server::dataReceived_cb, 
-			this,
-			boost::asio::placeholders::error,
-			boost::asio::placeholders::bytes_transferred));
+		boost::asio::async_read_until(socket_, mybuffer, "\r\n\r\n",
+			boost::bind(&server::dataReceived_cb,
+				this,
+				boost::asio::placeholders::error,
+				boost::asio::placeholders::bytes_transferred));
 	}
 	else {
 		std::cout << error.message() << std::endl;
@@ -77,10 +78,13 @@ void server::startAnswering()
 {
 	std::cout << "start Answering" << std::endl;
 	while (!connection->isNewResponse()); //Espera que haya un mensaje para devolver
-	//TODO conncection->setNewResponse(0); /////////////////////////////////////////////////////////////////
+	//conncection->setNewResponse(0); 
+	std::cout << "hola" << std::endl;
+	answer = connection->getResponse();
+	std::cout << answer << std::endl;
 	boost::asio::async_write(
 		socket_,
-		boost::asio::buffer(connection->getResponse()),
+		boost::asio::buffer(answer),
 		boost::bind(
 			&server::responseSent_cb,
 			this,
