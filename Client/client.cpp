@@ -45,7 +45,6 @@ size_t client::writeCallback(char* ptr, size_t size, size_t nmemb, void* userdat
 	return size * nmemb;
 }
 
-
 void client::configCurl(CURL* curl, char* argv) {
 	curl_easy_setopt(curl, CURLOPT_URL, argv); //configuracion
 	curl_easy_setopt(curl, CURLOPT_PORT, 80);
@@ -65,13 +64,20 @@ void client::failed() {
 
 int client::createFile() {
 	int succeed = 1;
-	ofstream outfile(fileName());
-	outfile << dataRecieved;
-	if (outfile.fail())
+	if (dataRecieved == "")
 	{
 		succeed = 0;
 	}
-	outfile.close();
+	else
+	{
+		ofstream outfile(fileName());
+		outfile << dataRecieved;
+		if (outfile.fail())
+		{
+			succeed = 0;
+		}
+		outfile.close();
+	}
 	return succeed;
 	//devuelve 1 si se pudo crear el file, cero si no
 }
