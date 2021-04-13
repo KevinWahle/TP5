@@ -12,12 +12,12 @@ public:
 	~server();
 
 	void startListening();
+	void startAnswering();
 	std::string getData();
 	void setData(std::string data);
 
 private:
 	void startWaitingConnection();
-	void startAnswering();
 	void connectionReceived_cb(const boost::system::error_code& error);
 	void dataReceived_cb(const boost::system::error_code& error, std::size_t size);
 	void responseSent_cb(const boost::system::error_code& error, size_t bytes_sent);

@@ -25,12 +25,7 @@ public:
 	//Getter respuesta
 	string getResponse();
 
-	//Chequeo de nueva respuesta
-	bool isNewResponse();
 
-	bool isFinished();
-
-	void disconnect();
 
 
 
@@ -38,8 +33,6 @@ private:
 	string request;
 	string response;
 	bool newRequest;
-	bool newResponse;
-	bool finished;
 };
 
 #endif //__CONNECTION_H

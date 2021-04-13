@@ -9,15 +9,13 @@ int main () {
 	boost::asio::io_context io_context;
 	server server(io_context, 80, &myconnection);
 	server.startListening();
-	io_context.run();
-	
-	HTTPServer http (&myconnection);
-	std::cout << "casi entre a http" << std::endl;
-
-	while (myconnection.isNewRequest()){
-		std::cout << "entre a http" << std::endl;
-
-		http.start();
+	while (1) {
+		HTTPServer http(&myconnection);
+		if (myconnection.isNewRequest()) {
+			http.start();
+			server.startAnswering();
+		}
+		io_context.run_one();
 	}
 }
 

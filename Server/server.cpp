@@ -67,7 +67,6 @@ void server::dataReceived_cb(const boost::system::error_code& error, std::size_t
 {
 	if (!error) {
 		connection->setRequest(boost::asio::buffer_cast<const char*>(mybuffer.data()));
-		startAnswering();
 	}
 	else {
 		std::cout << error.message() << std::endl;
@@ -77,22 +76,20 @@ void server::dataReceived_cb(const boost::system::error_code& error, std::size_t
 void server::startAnswering()
 {
 	std::cout << "start Answering" << std::endl;
-	while (!connection->isNewResponse()); //Espera que haya un mensaje para devolver
-	//conncection->setNewResponse(0); 
-	std::cout << "hola" << std::endl;
-	answer = connection->getResponse();
-	std::cout << answer << std::endl;
-	boost::asio::async_write(
-		socket_,
-		boost::asio::buffer(answer),
-		boost::bind(
-			&server::responseSent_cb,
-			this,
-			boost::asio::placeholders::error,
-			boost::asio::placeholders::bytes_transferred
-		)
-	);
-
+	{ 
+		answer = connection->getResponse();
+		//std::cout << answer << std::endl;
+		boost::asio::async_write(
+			socket_,
+			boost::asio::buffer(answer),
+			boost::bind(
+				&server::responseSent_cb,
+				this,
+				boost::asio::placeholders::error,
+				boost::asio::placeholders::bytes_transferred
+			)
+		);
+	}
 }
 
 void server::responseSent_cb(const boost::system::error_code& error, size_t bytes_sent)

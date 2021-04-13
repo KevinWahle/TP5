@@ -120,13 +120,13 @@ void HTTPServer::doRequest() {
 	}
 	else
 	{
-		//Busca contenido.
+		//Busca contenido y lo guarda.
 		string content((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
 		fileContent.insert(0, content);
 
 		//Calcula largo del contenido.
 		file.seekg(0, file.end);
-		filenameLength = file.tellg();
+		filenameLength = (int) file.tellg();
 
 		file.close();
 	}
@@ -162,7 +162,7 @@ void HTTPServer::doResponse() {
 	response += "\r\n";
 
 	if (fileCheck != false) {
-		response += "Location: 127.0.0.1" + filename;
+		response += "Location: 127.0.0.1 " + filename;
 		response += "\r\n";
 	}
 	response += "Cache-Control: max-age=30";

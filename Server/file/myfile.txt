@@ -1,2 +1,2 @@
-Hola
-Este es un archivo de prueba
+Hola!
+Esto es un texto de prueba
