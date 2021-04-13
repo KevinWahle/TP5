@@ -52,6 +52,8 @@ void client::configCurl(CURL* curl, char* argv) {
 	curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTP); //o http
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &dataRecieved);
+	curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
+	curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header);
 }
 
 void client::succeded() {
@@ -64,11 +66,8 @@ void client::failed() {
 
 int client::createFile() {
 	int succeed = 1;
-	if (dataRecieved == "")
-	{
-		succeed = 0;
-	}
-	else
+	string str(header);
+	if (str.find("404 Not Found") == string::npos) //si no se encuentra
 	{
 		ofstream outfile(fileName());
 		outfile << dataRecieved;
@@ -77,6 +76,10 @@ int client::createFile() {
 			succeed = 0;
 		}
 		outfile.close();
+	}
+	else
+	{
+		succeed = 0;
 	}
 	return succeed;
 	//devuelve 1 si se pudo crear el file, cero si no
@@ -92,3 +95,7 @@ string client::fileName() {
 	return name;
 }
 
+size_t client::header_callback(char* buffer, size_t size, size_t nitems, void* userdata) {
+	((std::string*)userdata)->append(buffer, size * nitems);
+	return size * nitems;
+}
