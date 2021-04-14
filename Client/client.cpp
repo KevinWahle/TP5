@@ -7,7 +7,7 @@ using namespace std;
 
 
 void client::setData(string mydata) {
-	data = mydata;
+	data= mydata;
 }
 
 void client::Request(int argc, char* argv[]) {
@@ -69,7 +69,7 @@ int client::createFile() {
 	string str(header);
 	if (str.find("404 Not Found") == string::npos) //si no se encuentra
 	{
-		ofstream outfile(fileName());
+		ofstream outfile(fileName(), ios::binary);
 		outfile << dataRecieved;
 		if (outfile.fail())
 		{

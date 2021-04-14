@@ -13,5 +13,4 @@ int main(int argc, char* argv[]) {
 	else {
 		cout << "The arguments are not valid" << endl;
 	}
-
 }

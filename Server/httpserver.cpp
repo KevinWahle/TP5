@@ -190,7 +190,7 @@ void HTTPServer::doResponse() {
 	if (fileCheck != false) {
 		response += "\r\n";
 		response += fileContent;
-		response += "\r\n";
+		//response += "\r\n";
 	}
 
 }
