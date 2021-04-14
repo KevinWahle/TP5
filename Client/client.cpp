@@ -67,20 +67,31 @@ void client::failed() {
 int client::createFile() {
 	int succeed = 1;
 	string str(header);
+
+	//agregado:
+	string filename(fileName());
+	ofstream file;
+	file.open(filename, ios::out | ios::binary);
+
+
 	if (str.find("404 Not Found") == string::npos) //si no se encuentra
 	{
-		ofstream outfile(fileName(), ios::binary);
-		outfile << dataRecieved;
-		if (outfile.fail())
-		{
-			succeed = 0;
-		}
-		outfile.close();
+		//ofstream outfile(fileName(), ios::binary);
+		//outfile << dataRecieved;
+		cout << "The file was found" << endl;
+		file << dataRecieved;
 	}
-	else
+	else if (str.find("202 OK") == string::npos) 
+	{
+		cout << "The file was not found" << endl;
+		file << header;
+		//succeed = 0;
+	}
+	if (file.fail())
 	{
 		succeed = 0;
 	}
+	file.close();
 	return succeed;
 	//devuelve 1 si se pudo crear el file, cero si no
 }
