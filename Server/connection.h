@@ -26,9 +26,6 @@ public:
 	string getResponse();
 
 
-
-
-
 private:
 	string request;
 	string response;

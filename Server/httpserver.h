@@ -11,6 +11,8 @@ public:
 	//Recibe request de connection y los guarda.
 	void start();
 
+private:
+
 	//Verifica si el request se corresponde con HTTP.
 	bool isRequestOK();
 
@@ -19,16 +21,6 @@ public:
 
 	//Devuelve respuesta.
 	void doResponse();
-
-	//Activa flag de respuesta en connection.
-	//void stop();
-
-private:
-	//Lee request y guarda los campos. De no cumplir el formato, devuelve error.
-	//bool readRequest();
-
-	//Construye respuesta 
-	//void doResponse();
 
 	Connection* myConnection;
 	string request;

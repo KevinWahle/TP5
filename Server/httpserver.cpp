@@ -113,7 +113,7 @@ void HTTPServer::doRequest() {
 	if (fileCheck == false) {
 		return;
 	}
-	ifstream file(filename);
+	ifstream file(filename, ios::binary);
 	if (!file.is_open()) {
 		fileCheck = false;
 		return;
