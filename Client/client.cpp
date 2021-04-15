@@ -76,8 +76,7 @@ int client::createFile() {
 
 	if (str.find("404 Not Found") == string::npos) //si no se encuentra
 	{
-		//ofstream outfile(fileName(), ios::binary);
-		//outfile << dataRecieved;
+
 		cout << "The file was found" << endl;
 		file << dataRecieved;
 	}
@@ -85,7 +84,6 @@ int client::createFile() {
 	{
 		cout << "The file was not found" << endl;
 		file << header;
-		//succeed = 0;
 	}
 	if (file.fail())
 	{

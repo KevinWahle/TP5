@@ -19,17 +19,17 @@ server::~server()
 
 void server::startListening()
 {
-	if (socket_.is_open())
+	if (socket_.is_open())			// Si inicialmente el socket estaba abierto, lo cierro
 	{
 		socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
 		socket_.close();
 	}
-	mybuffer.consume(mybuffer.size());
+	mybuffer.consume(mybuffer.size());	// Limpio el buffer
 	startWaitingConnection();
 }
 
 
-void server::startWaitingConnection()
+void server::startWaitingConnection()	// Comienzo a esperar conexión 
 {
 	std::cout << "Start waiting for connection" << std::endl;
 	if (socket_.is_open())
@@ -47,12 +47,12 @@ void server::startWaitingConnection()
 	);
 }
 
-void server::connectionReceived_cb(const boost::system::error_code& error)
+void server::connectionReceived_cb(const boost::system::error_code& error) // Recibí conexión
 {
 	if (!error) {
 		std::cout << "connection Received" << std::endl;
 
-		boost::asio::async_read_until(socket_, mybuffer, "\r\n\r\n",
+		boost::asio::async_read_until(socket_, mybuffer, "\r\n\r\n",	// Leo hasta terminador
 			boost::bind(&server::dataReceived_cb,
 				this,
 				boost::asio::placeholders::error,
@@ -66,7 +66,7 @@ void server::connectionReceived_cb(const boost::system::error_code& error)
 void server::dataReceived_cb(const boost::system::error_code& error, std::size_t size)
 {
 	if (!error) {
-		connection->setRequest(boost::asio::buffer_cast<const char*>(mybuffer.data()));
+		connection->setRequest(boost::asio::buffer_cast<const char*>(mybuffer.data()));	//Cargo lo recibido para que el correspondiente protocolo lo analice
 	}
 	else {
 		std::cout << error.message() << std::endl;
@@ -77,7 +77,7 @@ void server::startAnswering()
 {
 	std::cout << "start Answering" << std::endl;
 	{ 
-		answer = connection->getResponse();
+		answer = connection->getResponse();	// Leo la respuesta del correspondiente protocolo
 		//std::cout << answer << std::endl;
 		boost::asio::async_write(
 			socket_,
@@ -100,18 +100,9 @@ void server::responseSent_cb(const boost::system::error_code& error, size_t byte
 	else {
 		std::cout << error.message() << std::endl;
 	}
-	socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both);	//Ends the connection
+	socket_.shutdown(boost::asio::ip::tcp::socket::shutdown_both);	// Finalizo la conexión
 	socket_.close();
 
 	startListening();
 
-}
-
-std::string server::getData()
-{
-	return data;
-}
-
-void server::setData(std::string mydata) {
-	data = mydata;
 }

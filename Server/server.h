@@ -13,8 +13,7 @@ public:
 
 	void startListening();
 	void startAnswering();
-	std::string getData();
-	void setData(std::string data);
+
 
 private:
 	void startWaitingConnection();
@@ -23,7 +22,6 @@ private:
 	void responseSent_cb(const boost::system::error_code& error, size_t bytes_sent);
 	//void stopListening();
 
-	std::string data;
 	std::string answer;
 	Connection* connection;
 	boost::asio::io_context& context_;
