@@ -13,5 +13,6 @@ int main(int argc, char* argv[]) {
 	else {
 		cout << "The arguments are not valid" << endl;
 	}
-	//cin.get();
+	cin.get(); //Esta linea esta para evitar que se cierre la terminal (bug de IDE) una vez que se termine ejecutar el client
+
 }
