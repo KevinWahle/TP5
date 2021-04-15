@@ -5,19 +5,23 @@
 #include <sstream>
 #include <time.h>
 
+//--------------- CONSTANTES ---------------//
+
+#define		CRLF	"\r\n"
 
 #define		GET		"GET"
 #define		HTTP_PROTOCOL	 "HTTP/1.1"
-#define		HTML	".html"
-#define		JSON	".json"
-#define		TXT		".txt"
 #define		HOST	"Host: 127.0.0.1"
-#define		CRLF	"\r\n"
+
+#define		POINT	"."
+
 #define		RELATIVE_PATH	".."
 
 #pragma warning(disable : 4996)
 
+//--------------- METODOS ---------------//
 
+//Constructor. Recibe puntero a connection. 
 HTTPServer::HTTPServer(Connection* connection) {
 	request = "";
 	response = "";
@@ -28,7 +32,7 @@ HTTPServer::HTTPServer(Connection* connection) {
 	myConnection = connection;
 }
 
-//Recibe request de connection y los guarda.
+//start(): Recibe request de connection, lo procesa, genera respuesta y la carga en connection.
 void HTTPServer::start() {
 	request = myConnection->getRequest();
 	if (isRequestOK())
@@ -37,20 +41,21 @@ void HTTPServer::start() {
 	myConnection->setResponse(response);
 }
 
-//Verifica si el request se corresponde con HTTP.
+//isRequestOK(): Verifica si el request se corresponde con HTTP.
 bool HTTPServer::isRequestOK() {
 
 	//Separa request en lineas. 
-	size_t firstLineLength = request.find(CRLF);
+	size_t firstLineLength = request.find(CRLF);	//Busca CRLF y separa primera linea. 
 	if (firstLineLength == string::npos) {
 		return fileCheck;
 	}
 	string firstLine = request.substr(0, firstLineLength);
-	size_t secondLineLength = request.find(CRLF, firstLineLength + 2);
+	size_t secondLineLength = request.find(CRLF, firstLineLength + 2); //Busca CRLF y separa segunda linea. 
 	if (secondLineLength == string::npos) {
 		return fileCheck;
 	}
 	string secondLine = request.substr(firstLineLength + 2, secondLineLength - firstLineLength - 1);
+
 	//Si la segunda linea no es equivalente a HOST, la request es incorrecta.
 	if (!secondLine.compare(HOST)) {
 		return fileCheck;
@@ -58,50 +63,45 @@ bool HTTPServer::isRequestOK() {
 
 	//Analiza primera linea.
 	size_t found = 0;
-	found = firstLine.find(GET);
+	found = firstLine.find(GET);	//De no encontrarse GET, error.
 	if (found == string::npos || found != 0) {
 		return fileCheck;
 	}
 	firstLine.erase(found, 3);
-	found = firstLine.find(HTTP_PROTOCOL);
+	found = firstLine.find(HTTP_PROTOCOL);	//De no encontrarse el HTTP protocol, error.
 	if (found == string::npos) {
 		return fileCheck;
 	}
 	firstLine.erase(found, 8);
-
-	size_t slash = firstLine.find("/");
-	found = firstLine.find(HTML);
+	
+	//Busca nombre de archivo. Inicia buscando el punto y el siguiente espacio libre para la detectar extension.
+	size_t firstSpace = firstLine.find(" ");
+	found = firstLine.find(POINT);	
 	if (found == string::npos) {
-		found = firstLine.find(TXT);
-		if (found == string::npos) {
-			found = firstLine.find(JSON);
-			if (found == string::npos) {
-				return fileCheck;
-			}
-			else {
-				filename.assign(firstLine, slash, found + 5 - slash);
-			}
-		}
-		else {
-			filename.assign(firstLine, slash, found + 4 - slash);
-		}
+			//En caso de no encontrar el punto de la extension, devuelve error.
+			return fileCheck;
 	}
 	else {
-		filename.assign(firstLine, slash, found + 5 - slash);
+		size_t lastSpace = firstLine.find(" ", found);	//Busca siguiente espacio.
+		if (lastSpace == string::npos) {
+			return fileCheck;
+		}
+		else {
+			filename.assign(firstLine, firstSpace + 1, lastSpace - firstSpace + 1); //Y construye la respuesta. 
+		}
 	}
-	//Adapta filename.
-	slash = 0;
+	//Adapta filename cambiando formato de barras.
 	do {
-		slash = filename.find("/");
-		if (slash != string::npos) {
-			if (slash == 0) {
-				filename.erase(slash, 1);
+		found = filename.find("/");
+		if (found != string::npos) {
+			if (found == 0) {
+				filename.erase(found, 1);
 			}
 			else {
-				filename.replace(slash, 1, "\\");
+				filename.replace(found, 1, "\\");
 			}
 		}
-	} while (slash != string::npos);
+	} while (found != string::npos);
 
 	//Si llegó hasta acá, parseo de request completo.
 	fileCheck = true;
@@ -113,6 +113,7 @@ void HTTPServer::doRequest() {
 	if (fileCheck == false) {
 		return;
 	}
+	//Abre archivo.
 	ifstream file(filename, ios::binary);
 	if (!file.is_open()) {
 		fileCheck = false;
@@ -132,7 +133,7 @@ void HTTPServer::doRequest() {
 	}
 }
 
-//Guarda respuesta en connection
+//doResponse(): construye respuesta y la guarda en connection.
 void HTTPServer::doResponse() {
 	//Se analiza si hubieron errores durante el proceso.
 	string state;
@@ -169,11 +170,11 @@ void HTTPServer::doResponse() {
 	response += "\r\n";
 	response += "Expires: ";
 
+	//Tiempo
 	datetm->tm_sec += 30;
 	if (datetm->tm_sec > 59) {
 		datetm->tm_sec -= 60;
 	}
-
 	dateGMT = asctime(datetm);
 	if (dateGMT != NULL) {
 		stringDate.assign(dateGMT);
@@ -191,5 +192,5 @@ void HTTPServer::doResponse() {
 		response += "\r\n";
 		response += fileContent;
 	}
-
+	//Finaliza respuesta.
 }
