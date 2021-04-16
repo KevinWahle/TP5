@@ -9,6 +9,7 @@ int main () {
 	boost::asio::io_context io_context;
 	server server(io_context, 80, &myconnection);
 	server.startListening();
+
 	while (1) {
 		HTTPServer http(&myconnection);
 		if (myconnection.isNewRequest()) {
